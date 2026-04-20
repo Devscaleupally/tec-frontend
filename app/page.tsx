@@ -37,10 +37,7 @@ export default function HomePage() {
       <RecentlyAddedSection reports={recentlyAddedReports} />
       <FeaturedSection reports={featuredReports} />
 
-      <footer
-        id="about"
-        className="border-t border-neutral-200 bg-neutral-50 py-8 text-center text-sm text-tec-muted"
-      >
+      <footer className="border-t border-neutral-200 bg-neutral-50 py-8 text-center text-sm text-tec-muted">
         <SectionWrapper>
           <p>The TEC Research Observatory — prototype UI aligned to design.</p>
         </SectionWrapper>

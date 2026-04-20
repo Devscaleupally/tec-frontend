@@ -4,14 +4,24 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { SectionWrapper } from "@/components/layout/SectionWrapper";
 
 const navLinks = [
-  { href: "#", label: "Home", active: true },
-  { href: "#reports", label: "Reports", active: false },
-  { href: "#about", label: "About", active: false },
-  { href: "#logout", label: "Logout", active: false },
-];
+  { href: "/", label: "Home", match: "/" },
+  { href: "/reports", label: "Reports", match: "/reports", prefix: true },
+  { href: "/about", label: "About", match: "/about" },
+  { href: "#logout", label: "Logout", match: "" },
+] as const;
+
+function isNavLinkActive(
+  link: { readonly match: string; readonly prefix?: boolean },
+  pathname: string,
+) {
+  if (!link.match) return false;
+  if (link.prefix) return pathname.startsWith(link.match);
+  return pathname === link.match;
+}
 
 function GovernmentOfDubaiMark() {
   return (
@@ -51,53 +61,62 @@ function ExecutiveCouncilLogo({ compact }: { compact?: boolean }) {
 
 function NavLinksList({
   variant,
+  pathname,
   onNavigate,
 }: {
   variant: "desktop" | "mobile";
+  pathname: string;
   onNavigate?: () => void;
 }) {
   if (variant === "desktop") {
     return (
       <ul className="flex list-none items-center justify-center gap-8 xl:gap-10">
-        {navLinks.map((link) => (
-          <li key={link.label}>
+        {navLinks.map((link) => {
+          const isActive = isNavLinkActive(link, pathname);
+          return (
+            <li key={link.label}>
             <Link
               href={link.href}
               className={`inline-block whitespace-nowrap text-sm font-medium text-white transition hover:text-white ${
-                link.active
+                isActive
                   ? "border-b-2 border-white pb-1"
                   : "border-b-2 border-transparent pb-1 hover:border-white/40"
               }`}
             >
               {link.label}
             </Link>
-          </li>
-        ))}
+            </li>
+          );
+        })}
       </ul>
     );
   }
 
   return (
     <ul className="flex list-none flex-col gap-0.5">
-      {navLinks.map((link) => (
-        <li key={link.label}>
+      {navLinks.map((link) => {
+        const isActive = isNavLinkActive(link, pathname);
+        return (
+          <li key={link.label}>
           <Link
             href={link.href}
             className={`block rounded-md px-2 py-2.5 text-center text-sm font-medium text-white/95 transition hover:bg-white/10 hover:text-white ${
-              link.active ? "border-b-2 border-white" : ""
+              isActive ? "border-b-2 border-white" : ""
             }`}
             onClick={onNavigate}
           >
             {link.label}
           </Link>
-        </li>
-      ))}
+          </li>
+        );
+      })}
     </ul>
   );
 }
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <header className="relative z-20 bg-transparent">
@@ -121,7 +140,11 @@ export function Navbar() {
             open ? "block" : "hidden"
           } lg:hidden`}
         >
-          <NavLinksList variant="mobile" onNavigate={() => setOpen(false)} />
+          <NavLinksList
+            variant="mobile"
+            pathname={pathname}
+            onNavigate={() => setOpen(false)}
+          />
         </div>
 
         {/* Desktop: left label | centered nav | council */}
@@ -130,7 +153,7 @@ export function Navbar() {
             <GovernmentOfDubaiMark />
           </div>
           <nav aria-label="Main">
-            <NavLinksList variant="desktop" />
+            <NavLinksList variant="desktop" pathname={pathname} />
           </nav>
           <div className="justify-self-end">
             <ExecutiveCouncilLogo />

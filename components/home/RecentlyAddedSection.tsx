@@ -19,42 +19,48 @@ export function RecentlyAddedSection({ reports }: RecentlyAddedSectionProps) {
     const card = el.querySelector("[data-card]");
     const width = card ? (card as HTMLElement).offsetWidth : 280;
     const gap = 16;
-    el.scrollBy({ left: dir * (width + gap), behavior: "smooth" });
+    const cardsPerView = 3;
+    el.scrollBy({
+      left: dir * (width * cardsPerView + gap * (cardsPerView - 1)),
+      behavior: "smooth",
+    });
   }, []);
 
   return (
     <section id="reports" className="py-12 sm:py-16">
       <SectionWrapper>
-        <h2 className="mb-6 text-xl font-semibold text-tec-brown sm:text-2xl">
-          Recently Added
-        </h2>
+        <div className="mb-6 border-b border-neutral-200 pb-4 sm:mb-8">
+          <h2 className="text-xl font-semibold text-tec-brown sm:text-2xl">
+            Recently Added
+          </h2>
+        </div>
         <div className="relative">
           <button
             type="button"
             onClick={() => scrollByCards(-1)}
-            className="absolute left-0 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 -translate-x-2 items-center justify-center rounded-full border border-black/10 bg-white text-tec-brown shadow-md transition hover:bg-neutral-50 md:flex lg:-translate-x-4"
+            className="absolute left-2 top-[31%] z-20 hidden h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/90 text-neutral-500 shadow-sm transition-colors hover:text-neutral-700 md:flex"
             aria-label="Previous items"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-7 w-7 stroke-[1.25]" />
           </button>
           <button
             type="button"
             onClick={() => scrollByCards(1)}
-            className="absolute right-0 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 translate-x-2 items-center justify-center rounded-full border border-black/10 bg-white text-tec-brown shadow-md transition hover:bg-neutral-50 md:flex lg:translate-x-4"
+            className="absolute right-2 top-[31%] z-20 hidden h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/90 text-neutral-500 shadow-sm transition-colors hover:text-neutral-700 md:flex"
             aria-label="Next items"
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="h-7 w-7 stroke-[1.25]" />
           </button>
 
           <div
             ref={scrollerRef}
-            className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] md:px-12 [&::-webkit-scrollbar]:hidden"
+            className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {reports.map((report) => (
               <div
                 key={report.id}
                 data-card
-                className="w-[min(100%,280px)] shrink-0 snap-start sm:w-[300px] lg:w-[calc(33.333%-11px)]"
+                className="w-[min(100%,300px)] shrink-0 snap-start sm:w-[320px] md:w-[calc((100%-2.5rem)/3)]"
               >
                 <ReportCard report={report} />
               </div>
